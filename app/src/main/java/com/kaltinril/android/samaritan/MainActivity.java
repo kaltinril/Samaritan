@@ -204,6 +204,9 @@ public class MainActivity extends AppCompatActivity
             //mainList.addView(iv);
 
             galleryAddPic();
+
+            // GEO info:
+            // http://android-coding.blogspot.com/2011/10/read-exif-of-jpg-file-using.html
         }
     }
 
