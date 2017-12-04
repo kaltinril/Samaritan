@@ -2,6 +2,7 @@ package com.kaltinril.android.samaritan;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -24,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -35,6 +37,15 @@ import static android.os.Environment.getExternalStoragePublicDirectory;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    public static final String PREFS_NAME = "MyPrefsFile";
+    private boolean profileCreated;
+    private String username;
+    private String email;
+
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_FILE = 100;
+    String mCurrentPhotoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +74,31 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        // Load any of the basic preferrences
+        loadBasicPreferences();
+
+        // if the user has not yet created a profile, create one
+        if (!profileCreated) {
+            Intent intent = new Intent(this, CreateProfile.class);
+            startActivity(intent);
+        }
+
+    }
+
+    private void loadNavHeader(){
+        TextView tvName = (TextView)findViewById(R.id.nav_name);
+        TextView tvEmail = (TextView)findViewById(R.id.nav_email);
+        ImageView ivProfile = (ImageView)findViewById(R.id.nav_image);
+
+        tvName.setText(username);
+        tvEmail.setText(email);
+        //TODO: Set the image based on the image the user took
+    }
+
+    public void navEditProfile(View view){
+        Intent intent = new Intent(this, CreateProfile.class);
+        startActivity(intent);
     }
 
     @Override
@@ -80,6 +116,11 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
+        // Put the users name there
+        if (profileCreated)
+            loadNavHeader();
+
         return true;
     }
 
@@ -123,9 +164,18 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-    static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_FILE = 100;
-    String mCurrentPhotoPath;
+    private void loadBasicPreferences(){
+        // Restore preferences
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        profileCreated = settings.getBoolean("profileCreated", false);
+
+        if (profileCreated){
+            username = settings.getString("name", "");
+            email = settings.getString("email", "");
+        }
+    }
+
+
 
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);

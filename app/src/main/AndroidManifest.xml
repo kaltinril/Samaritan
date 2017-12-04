@@ -37,7 +37,14 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".CreateProfile"></activity>
+        <activity android:name=".CreateProfile"
+            android:parentActivityName="com.kaltinril.android.samaritan.MainActivity">
+
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.kaltinril.android.samaritan.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
