@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -29,6 +30,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -42,6 +45,7 @@ public class MainActivity extends AppCompatActivity
     private boolean profileCreated;
     private String username;
     private String email;
+    private String profilePicPath;
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_FILE = 100;
@@ -91,12 +95,45 @@ public class MainActivity extends AppCompatActivity
         TextView tvEmail = (TextView)findViewById(R.id.nav_email);
         ImageView ivProfile = (ImageView)findViewById(R.id.nav_image);
 
-        tvName.setText(username);
-        tvEmail.setText(email);
-        //TODO: Set the image based on the image the user took
+        // It seems like the onCreateOptionsMenu doesn't get called until
+        // it is opened for the first time, prevent errors if it is not present
+        if (tvName != null) {
+            tvName.setText(username);
+            tvEmail.setText(email);
+            // Set the image based on the image the user took previously
+            if (!profilePicPath.equals("")) {
+                Bitmap bmp = loadImageFromStorage(profilePicPath);
+                ivProfile.setImageBitmap(bmp);
+            }
+        }
+    }
+
+    private Bitmap loadImageFromStorage(String fileAndPath)
+    {
+        Bitmap b = null;
+        try {
+            File f=new File(fileAndPath);
+            b = BitmapFactory.decodeStream(new FileInputStream(f));
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+        return b;
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        loadBasicPreferences();
+        loadNavHeader();
     }
 
     public void navEditProfile(View view){
+        // Close the drawer when we click on the image to open the profile editor
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+
         Intent intent = new Intent(this, CreateProfile.class);
         startActivity(intent);
     }
@@ -172,10 +209,9 @@ public class MainActivity extends AppCompatActivity
         if (profileCreated){
             username = settings.getString("name", "");
             email = settings.getString("email", "");
+            profilePicPath = settings.getString("profilePic", "");
         }
     }
-
-
 
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
