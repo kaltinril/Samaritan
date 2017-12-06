@@ -1,6 +1,7 @@
 package com.kaltinril.android.samaritan;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -24,6 +25,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -40,6 +42,8 @@ import static android.os.Environment.getExternalStoragePublicDirectory;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    Dialog imageDialog;
 
     public static final String PREFS_NAME = "MyPrefsFile";
     private boolean profileCreated;
@@ -291,6 +295,8 @@ public class MainActivity extends AppCompatActivity
 
             galleryAddPic();
 
+            showDialog();
+
             // GEO info:
             // http://android-coding.blogspot.com/2011/10/read-exif-of-jpg-file-using.html
         }
@@ -353,5 +359,50 @@ public class MainActivity extends AppCompatActivity
             // permissions this app might request
         }
     }
+
+
+    private void setPic(ImageView mImageView) {
+        // Get the dimensions of the View
+        int targetW = mImageView.getWidth();
+        int targetH = mImageView.getHeight();
+
+        if (targetW ==0 || targetH == 0){
+            targetH = this.getWindow().getDecorView().getHeight() / 2;
+            targetW = this.getWindow().getDecorView().getWidth();
+        }
+
+        // Get the dimensions of the bitmap
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+        // Determine how much to scale down the image
+        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+
+
+        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+        mImageView.setImageBitmap(bitmap);
+    }
+
+    // Takes a bitmap and stores it in the image on a pop-up dialog
+    private void showDialog(){
+        imageDialog = new Dialog(this);
+        imageDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        imageDialog.setContentView(getLayoutInflater().inflate(R.layout.dialog_post_layout, null));
+
+        // Change the image
+        ImageView iv = (ImageView)imageDialog.findViewById(R.id.dpl_iv_post_image);
+        setPic(iv);
+
+        // Show the dialog
+        imageDialog.show();
+    }
+
 
 }

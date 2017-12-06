@@ -5,4 +5,16 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+
+    <string name="post_prompt">Enter details about this proclamation.</string>
+    <string name="tag_prompt">Enter a tag (like a license plate)</string>
+    <string name="post_category_prompt">Choose a category</string>
+    <string-array name="post_category">
+        <item>Road Condition</item>
+        <item>Car related</item>
+        <item>Cell Service</item>
+        <item>School alerts</item>
+        <item>Deal alerts</item>
+        <item>Crime alerts</item>
+    </string-array>
 </resources>
