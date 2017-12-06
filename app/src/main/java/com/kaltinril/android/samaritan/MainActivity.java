@@ -7,6 +7,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -385,9 +387,39 @@ public class MainActivity extends AppCompatActivity
         bmOptions.inJustDecodeBounds = false;
         bmOptions.inSampleSize = scaleFactor;
 
-
+        // Create the bitmap
         Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+
+        // Check if we need to rotate the bitmap
+        try {
+            // GEt the orientation of the photo
+            ExifInterface exif = new ExifInterface(mCurrentPhotoPath);
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+
+            Matrix matrix = new Matrix();
+            if (orientation == ExifInterface.ORIENTATION_ROTATE_90){
+                bitmap = RotateBitmap(bitmap, 90);
+            }
+            else if (orientation == ExifInterface.ORIENTATION_ROTATE_180) {
+                bitmap = RotateBitmap(bitmap, 180);
+            }
+            else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
+                bitmap = RotateBitmap(bitmap, 270);
+            }
+        }
+        catch (Exception e) {
+            System.err.println(e.toString());
+        }
+
+        // Set the bitmap to the imageview
         mImageView.setImageBitmap(bitmap);
+    }
+
+    public static Bitmap RotateBitmap(Bitmap source, float angle)
+    {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
 
     // Takes a bitmap and stores it in the image on a pop-up dialog
