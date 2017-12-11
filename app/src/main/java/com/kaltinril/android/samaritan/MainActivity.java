@@ -208,18 +208,28 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    /* /////////////////////////////////////
+        User Button code clicks
+    */ //////////////////////////////////////
+
     public void cancelClick(View view){
         Toast.makeText(getApplicationContext(),
                 "Canceled Proclamation.",
                 Toast.LENGTH_SHORT).show();
 
         imageDialog.cancel();
+        if (imageDialog != null)
+            imageDialog = null;
     }
 
     public void proclaimClick(View view){
         // Testing to see what happens if we open another Activity ontop of this one.
         Intent intent = new Intent(this, CreateProfile.class);
         startActivity(intent);
+    }
+
+    public void updatePictureClick(View view){
+        requestWritePermissions();
     }
 
     private void loadBasicPreferences(){
@@ -270,7 +280,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -284,8 +293,6 @@ public class MainActivity extends AppCompatActivity
 
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
-        // System.out.println("DEBUG: " + storageDir);
-        // System.out.println("DEBUG: " + mCurrentPhotoPath);
         return image;
     }
 
@@ -300,52 +307,24 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            //Bundle extras = data.getExtras();
-            // Bitmap imageBitmap = (Bitmap) extras.get("data");
-
-            // Find the main listview and add the thumbnail to it
-            //ListView mainList = (ListView) findViewById(R.id.main_list);
-            //ImageView iv = new ImageView(getApplicationContext());
-            // iv.setImageBitmap(imageBitmap);
-
-            //mainList.addView(iv);
-
             galleryAddPic();
 
-            showDialog();
-
-
-
-            // GEO info:
-            // http://android-coding.blogspot.com/2011/10/read-exif-of-jpg-file-using.html
+            if (imageDialog == null) {
+                showDialog();
+            }else{
+                updateDialog();
+            }
         }
     }
 
+    // GEO info:
+    // http://android-coding.blogspot.com/2011/10/read-exif-of-jpg-file-using.html
     private String getGeoCords(String file){
         String exif="";
         double lat=0;
         double lng=0;
         try {
             ExifInterface exifInterface = new ExifInterface(file);
-            /*
-            exif += "\nIMAGE_LENGTH: " + exifInterface.getAttribute(ExifInterface.TAG_IMAGE_LENGTH);
-            exif += "\nIMAGE_WIDTH: " + exifInterface.getAttribute(ExifInterface.TAG_IMAGE_WIDTH);
-            exif += "\n DATETIME: " + exifInterface.getAttribute(ExifInterface.TAG_DATETIME);
-            exif += "\n TAG_MAKE: " + exifInterface.getAttribute(ExifInterface.TAG_MAKE);
-            exif += "\n TAG_MODEL: " + exifInterface.getAttribute(ExifInterface.TAG_MODEL);
-            exif += "\n TAG_ORIENTATION: " + exifInterface.getAttribute(ExifInterface.TAG_ORIENTATION);
-            exif += "\n TAG_WHITE_BALANCE: " + exifInterface.getAttribute(ExifInterface.TAG_WHITE_BALANCE);
-            exif += "\n TAG_FOCAL_LENGTH: " + exifInterface.getAttribute(ExifInterface.TAG_FOCAL_LENGTH);
-            exif += "\n TAG_FLASH: " + exifInterface.getAttribute(ExifInterface.TAG_FLASH);
-            exif += "\nGPS related:";
-            exif += "\n TAG_GPS_DATESTAMP: " + exifInterface.getAttribute(ExifInterface.TAG_GPS_DATESTAMP);
-            exif += "\n TAG_GPS_TIMESTAMP: " + exifInterface.getAttribute(ExifInterface.TAG_GPS_TIMESTAMP);
-            */
-            //exif += exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
-            //exif += "\n TAG_GPS_LATITUDE_REF: " + exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
-            //exif += ";" + exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
-            //exif += "\n TAG_GPS_LONGITUDE_REF: " + exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
-            //exif += "\n TAG_GPS_PROCESSING_METHOD: " + exifInterface.getAttribute(ExifInterface.TAG_GPS_PROCESSING_METHOD);
 
             String attrLATITUDE = exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
             String attrLATITUDE_REF = exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
@@ -372,9 +351,7 @@ public class MainActivity extends AppCompatActivity
                 exif = String.valueOf(lat) + ", " + String.valueOf(lng);
             }
 
-            Toast.makeText(getApplicationContext(),
-                    "finished",
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(),"finished", Toast.LENGTH_LONG).show();
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -430,17 +407,13 @@ public class MainActivity extends AppCompatActivity
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
 
-            } else {
-
-                // No explanation needed, we can request the permission.
-
+            } else { // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_FILE);
 
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
+                // app-defined int constant. The callback method gets the result of the request.
             }
         } else
         {
@@ -540,6 +513,14 @@ public class MainActivity extends AppCompatActivity
         imageDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         imageDialog.setContentView(getLayoutInflater().inflate(R.layout.dialog_post_layout, null));
 
+        // Update all the items on the dialog
+        updateDialog();
+
+        // Show the dialog
+        imageDialog.show();
+    }
+
+    private void updateDialog(){
         // Change the image
         ImageView iv = (ImageView)imageDialog.findViewById(R.id.dpl_iv_post_image);
         setPic(iv);
@@ -552,10 +533,6 @@ public class MainActivity extends AppCompatActivity
         }else {
             tv.setText(geoCoords);
         }
-
-        // Show the dialog
-        imageDialog.show();
     }
-
 
 }
