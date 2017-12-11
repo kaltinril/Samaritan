@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <EditText
+                    android:id="@+id/af_email"
+                    android:layout_width="300dp"
+                    android:layout_height="45dp"
+                    android:layout_column="0"
+                    android:layout_row="0"
+                    android:ems="30"
+                    android:hint="bob@example.com"
+                    android:inputType="textEmailAddress" />
+
+            </GridLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                style="?android:attr/buttonBarStyle">
+
+                <Button
+                    android:id="@+id/af_btn_cancel"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:layout_weight="1"
+                    android:text="Cancel"
+                    android:onClick="cancelAddFriendClick"
+                    style="?android:attr/buttonBarButtonStyle"/>
+
+                <Button
+                    android:id="@+id/af_btn_addFriend"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:layout_weight="1"
+                    android:text="Add Friend"
+                    android:onClick="addFriendClick"
+                    style="?android:attr/buttonBarButtonStyle"/>
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout >

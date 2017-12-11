@@ -40,6 +40,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import static android.os.Environment.getExternalStoragePublicDirectory;
 
@@ -53,6 +55,7 @@ public class MainActivity extends AppCompatActivity
     private String username;
     private String email;
     private String profilePicPath;
+    private Set<String> friendsSet;
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_FILE = 100;
@@ -64,6 +67,8 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        friendsSet = new HashSet<String>();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -194,7 +199,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_camera) {
             requestWritePermissions();
         } else if (id == R.id.nav_add_friend) {
-
+            showAddFriendDialog();
         } else if (id == R.id.nav_search) {
 
         } else if (id == R.id.nav_help) {
@@ -205,6 +210,8 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_profile) {
             Intent intent = new Intent(this, CreateProfile.class);
             startActivity(intent);
+        } else if (id == R.id.nav_view_friends){
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -236,6 +243,56 @@ public class MainActivity extends AppCompatActivity
         requestWritePermissions();
     }
 
+    public void cancelAddFriendClick(View view){
+        Toast.makeText(getApplicationContext(),
+                "Canceled add.",
+                Toast.LENGTH_SHORT).show();
+
+        imageDialog.cancel();
+        if (imageDialog != null)
+            imageDialog = null;
+    }
+
+    public void addFriendClick(View view){
+        if (friendsSet == null){
+            friendsSet = new HashSet<String>();
+        }
+
+        // Grab the email address from the dialog
+        TextView tv = (TextView)imageDialog.findViewById(R.id.af_email);
+        String newEmail = tv.getText().toString();
+
+        // Check if there was an email, if not, don't add it
+        // TODO: basic email validation?
+        if (!newEmail.isEmpty()) {
+            friendsSet.add(newEmail.toLowerCase());
+
+            // Save the new friend into the preferences so we don't lose it.
+            SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+            profileCreated = settings.getBoolean("profileCreated", false);
+
+            if (profileCreated) {
+                SharedPreferences.Editor editor = settings.edit();
+
+                if (friendsSet != null) {
+                    editor.putStringSet("friends", friendsSet);
+                    editor.apply();
+                    Toast.makeText(getApplicationContext(),
+                            "Friend added!",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }else{
+                Toast.makeText(getApplicationContext(),
+                        "Failed to add friend, create your profile first.",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+
+        imageDialog.cancel();
+        if (imageDialog != null)
+            imageDialog = null;
+    }
+
     private void loadBasicPreferences(){
         // Restore preferences
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
@@ -245,6 +302,7 @@ public class MainActivity extends AppCompatActivity
             username = settings.getString("name", "");
             email = settings.getString("email", "");
             profilePicPath = settings.getString("profilePic", "");
+            friendsSet = settings.getStringSet("friends", null);
         }
     }
 
@@ -537,6 +595,16 @@ public class MainActivity extends AppCompatActivity
         }else {
             tv.setText(geoCoords);
         }
+    }
+
+    // Takes a bitmap and stores it in the image on a pop-up dialog
+    private void showAddFriendDialog(){
+        imageDialog = new Dialog(this);
+        imageDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        imageDialog.setContentView(getLayoutInflater().inflate(R.layout.dialog_add_friend_layout, null));
+
+        // Show the dialog
+        imageDialog.show();
     }
 
 }
