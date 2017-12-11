@@ -211,7 +211,8 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(this, CreateProfile.class);
             startActivity(intent);
         } else if (id == R.id.nav_view_friends){
-
+            Intent intent = new Intent(this, ManageFriends.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -8,18 +8,18 @@
             android:icon="@drawable/ic_menu_camera"
             android:title="Proclaim" />
         <item
-            android:id="@+id/nav_add_friend"
-            android:icon="@drawable/ic_menu_add_friend"
-            android:title="Add Friend" />
-        <item
             android:id="@+id/nav_search"
             android:icon="@drawable/ic_menu_search"
             android:title="Subscribe to tags" />
 
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="Social">
         <menu>
+            <item
+                android:id="@+id/nav_add_friend"
+                android:icon="@drawable/ic_menu_add_friend"
+                android:title="Add Friend" />
             <item
                 android:id="@+id/nav_view_friends"
                 android:icon="@drawable/ic_menu_friends"

@@ -2,6 +2,7 @@
     <string name="app_name">Samaritan</string>
     <string name="createProfileTitle">Profile settings</string>
     <string name="helpTitle">Help and About</string>
+    <string name="manageFriendsTitle">Manage Friends</string>
 
     <string name="helpWhatIsSamaritan">\t This is an app that allows people to join and share information that they feel others may want to be aware of.
         For instance when driving you might find that a person has a blinker out, maybe their car’s tags are expired, perhaps their gas cap is open?
