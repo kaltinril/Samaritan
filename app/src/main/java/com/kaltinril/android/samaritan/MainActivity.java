@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.location.Location;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -313,10 +314,107 @@ public class MainActivity extends AppCompatActivity
 
             showDialog();
 
+
+
             // GEO info:
             // http://android-coding.blogspot.com/2011/10/read-exif-of-jpg-file-using.html
         }
     }
+
+    private String getGeoCords(String file){
+        String exif="";
+        double lat=0;
+        double lng=0;
+        try {
+            ExifInterface exifInterface = new ExifInterface(file);
+            /*
+            exif += "\nIMAGE_LENGTH: " + exifInterface.getAttribute(ExifInterface.TAG_IMAGE_LENGTH);
+            exif += "\nIMAGE_WIDTH: " + exifInterface.getAttribute(ExifInterface.TAG_IMAGE_WIDTH);
+            exif += "\n DATETIME: " + exifInterface.getAttribute(ExifInterface.TAG_DATETIME);
+            exif += "\n TAG_MAKE: " + exifInterface.getAttribute(ExifInterface.TAG_MAKE);
+            exif += "\n TAG_MODEL: " + exifInterface.getAttribute(ExifInterface.TAG_MODEL);
+            exif += "\n TAG_ORIENTATION: " + exifInterface.getAttribute(ExifInterface.TAG_ORIENTATION);
+            exif += "\n TAG_WHITE_BALANCE: " + exifInterface.getAttribute(ExifInterface.TAG_WHITE_BALANCE);
+            exif += "\n TAG_FOCAL_LENGTH: " + exifInterface.getAttribute(ExifInterface.TAG_FOCAL_LENGTH);
+            exif += "\n TAG_FLASH: " + exifInterface.getAttribute(ExifInterface.TAG_FLASH);
+            exif += "\nGPS related:";
+            exif += "\n TAG_GPS_DATESTAMP: " + exifInterface.getAttribute(ExifInterface.TAG_GPS_DATESTAMP);
+            exif += "\n TAG_GPS_TIMESTAMP: " + exifInterface.getAttribute(ExifInterface.TAG_GPS_TIMESTAMP);
+            */
+            //exif += exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+            //exif += "\n TAG_GPS_LATITUDE_REF: " + exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
+            //exif += ";" + exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
+            //exif += "\n TAG_GPS_LONGITUDE_REF: " + exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
+            //exif += "\n TAG_GPS_PROCESSING_METHOD: " + exifInterface.getAttribute(ExifInterface.TAG_GPS_PROCESSING_METHOD);
+
+            String attrLATITUDE = exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+            String attrLATITUDE_REF = exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
+            String attrLONGITUDE = exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
+            String attrLONGITUDE_REF = exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
+
+            if((attrLATITUDE !=null)
+                    && (attrLATITUDE_REF !=null)
+                    && (attrLONGITUDE != null)
+                    && (attrLONGITUDE_REF !=null)) {
+
+                if (attrLATITUDE_REF.equals("N")) {
+                    lat = convertToDegree(attrLATITUDE);
+                } else {
+                    lat = 0 - convertToDegree(attrLATITUDE);
+                }
+
+                if (attrLONGITUDE_REF.equals("E")) {
+                    lng = convertToDegree(attrLONGITUDE);
+                } else {
+                    lng = 0 - convertToDegree(attrLONGITUDE);
+                }
+
+                exif = String.valueOf(lat) + ", " + String.valueOf(lng);
+            }
+
+            Toast.makeText(getApplicationContext(),
+                    "finished",
+                    Toast.LENGTH_LONG).show();
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(),
+                    e.toString(),
+                    Toast.LENGTH_LONG).show();
+        }
+
+        return exif;
+    }
+
+
+    // Used coded from below to save myself typing
+    // here http://android-er.blogspot.com/2010/01/convert-exif-gps-info-to-degree-format.html
+    private Float convertToDegree(String stringDMS){
+        Float result = null;
+        String[] DMS = stringDMS.split(",", 3);
+
+        String[] stringD = DMS[0].split("/", 2);
+        Double D0 = new Double(stringD[0]);
+        Double D1 = new Double(stringD[1]);
+        Double FloatD = D0/D1;
+
+        String[] stringM = DMS[1].split("/", 2);
+        Double M0 = new Double(stringM[0]);
+        Double M1 = new Double(stringM[1]);
+        Double FloatM = M0/M1;
+
+        String[] stringS = DMS[2].split("/", 2);
+        Double S0 = new Double(stringS[0]);
+        Double S1 = new Double(stringS[1]);
+        Double FloatS = S0/S1;
+
+        result = new Float(FloatD + (FloatM/60) + (FloatS/3600));
+
+        return result;
+
+
+    };
 
     private void requestWritePermissions(){
         // Here, thisActivity is the current activity
@@ -445,6 +543,15 @@ public class MainActivity extends AppCompatActivity
         // Change the image
         ImageView iv = (ImageView)imageDialog.findViewById(R.id.dpl_iv_post_image);
         setPic(iv);
+
+        // Update the geo coordinates
+        TextView tv = (TextView)imageDialog.findViewById(R.id.dpl_tx_geo);
+        String geoCoords = getGeoCords(mCurrentPhotoPath);
+        if (geoCoords.equalsIgnoreCase("")) {
+            tv.setText("Image has no GeoLocation data");
+        }else {
+            tv.setText(geoCoords);
+        }
 
         // Show the dialog
         imageDialog.show();
