@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -91,6 +92,14 @@ public class CreateProfile extends AppCompatActivity {
         return b;
     }
 
+    public void cancelClick(View view){
+        Toast.makeText(getApplicationContext(),
+                "Canceled Profile Edit.",
+                Toast.LENGTH_SHORT).show();
+        // Close this view
+        this.finish();
+    }
+
     // Save the values
     public void doneClick(View view){
 
@@ -109,6 +118,10 @@ public class CreateProfile extends AppCompatActivity {
 
         // Commit the edits!
         editor.commit();
+
+        Toast.makeText(getApplicationContext(),
+                "Profile Saved!",
+                Toast.LENGTH_SHORT).show();
 
         // Close this view
         this.finish();

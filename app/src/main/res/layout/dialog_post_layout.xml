@@ -22,12 +22,12 @@
                 <EditText
                     android:id="@+id/editText"
                     android:layout_width="match_parent"
-                    android:layout_height="148dp"
+                    android:layout_height="100dp"
                     android:layout_column="0"
                     android:layout_row="0"
                     android:ems="10"
-                    android:inputType="textMultiLine"
-                    android:hint="@string/post_prompt"/>
+                    android:hint="@string/post_prompt"
+                    android:inputType="textMultiLine" />
 
                 <ImageView
                     android:id="@+id/dpl_iv_post_image"
@@ -54,44 +54,61 @@
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/textView4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:text="Tags: "
-                    android:textSize="20dp" />
-
                 <EditText
                     android:id="@+id/editText2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.62"
+                    android:layout_weight="1"
                     android:ems="10"
                     android:inputType="textPersonName"
                     android:text=""
                     android:hint="@string/tag_prompt"/>
+
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                style="?android:attr/buttonBarStyle">
+
+
+
+                <ImageButton
+                    android:id="@+id/map_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:layout_weight="1"
+                    android:background="@color/colorAccent"
+                    app:srcCompat="@android:drawable/ic_dialog_map" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                style="?android:attr/buttonBarStyle">
 
                 <Button
                     android:id="@+id/dpl_btn_cancel"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:layout_weight="1"
-                    android:text="Cancel" />
+                    android:text="Cancel"
+                    android:onClick="cancelClick"
+                    style="?android:attr/buttonBarButtonStyle"/>
 
                 <Button
                     android:id="@+id/dpl_btn_proclaim"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:layout_weight="1"
-                    android:text="Proclaim" />
+                    android:text="Proclaim"
+                    android:onClick="proclaimClick"
+                    style="?android:attr/buttonBarButtonStyle"/>
             </LinearLayout>
+
+
 
         </LinearLayout>
     </ScrollView>

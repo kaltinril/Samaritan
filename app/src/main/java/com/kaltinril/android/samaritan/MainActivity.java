@@ -207,6 +207,20 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    public void cancelClick(View view){
+        Toast.makeText(getApplicationContext(),
+                "Canceled Proclamation.",
+                Toast.LENGTH_SHORT).show();
+
+        imageDialog.cancel();
+    }
+
+    public void proclaimClick(View view){
+        // Testing to see what happens if we open another Activity ontop of this one.
+        Intent intent = new Intent(this, CreateProfile.class);
+        startActivity(intent);
+    }
+
     private void loadBasicPreferences(){
         // Restore preferences
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
