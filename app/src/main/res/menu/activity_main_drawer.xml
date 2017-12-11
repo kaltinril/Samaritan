@@ -6,6 +6,10 @@
         <item
             android:id="@+id/nav_camera"
             android:icon="@drawable/ic_menu_camera"
+            android:title="Proclaim (With image)" />
+        <item
+            android:id="@+id/nav_proclaim_no_image"
+            android:icon="@drawable/ic_menu_add_proclamation"
             android:title="Proclaim" />
         <item
             android:id="@+id/nav_search"

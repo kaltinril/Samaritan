@@ -29,6 +29,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -39,6 +40,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -56,6 +58,12 @@ public class MainActivity extends AppCompatActivity
     private String email;
     private String profilePicPath;
     private Set<String> friendsSet;
+
+    ListView proclamantionList;
+    ArrayList itemname = new ArrayList<String>();
+    ArrayList imgid = new ArrayList<Bitmap>();
+    ArrayList itemDescr = new ArrayList<String>();
+
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_FILE = 100;
@@ -99,6 +107,23 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(this, CreateProfile.class);
             startActivity(intent);
         }
+
+
+        CustomListAdapter adapter=new CustomListAdapter(this, itemname, imgid, itemDescr);
+        proclamantionList=(ListView)findViewById(R.id.main_list);
+        proclamantionList.setAdapter(adapter);
+
+        proclamantionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                // TODO Auto-generated method stub
+                String Slecteditem = itemname.get(+position).toString();
+                Toast.makeText(getApplicationContext(), Slecteditem, Toast.LENGTH_SHORT).show();
+
+            }
+        });
 
     }
 
@@ -195,9 +220,10 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_camera) {
             requestWritePermissions();
+        } else if (id == R.id.nav_proclaim_no_image){
+            mCurrentPhotoPath = "";
+            showDialog();
         } else if (id == R.id.nav_add_friend) {
             showAddFriendDialog();
         } else if (id == R.id.nav_search) {
@@ -235,9 +261,24 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void proclaimClick(View view){
-        // Testing to see what happens if we open another Activity ontop of this one.
-        Intent intent = new Intent(this, CreateProfile.class);
-        startActivity(intent);
+        ImageView iv = (ImageView)imageDialog.findViewById(R.id.dpl_iv_post_image);
+
+        Bitmap bm = setPic(50, 50);
+        imgid.add(bm);
+
+        TextView tv = (TextView)imageDialog.findViewById(R.id.dpl_details);
+        TextView tvTag = (TextView)imageDialog.findViewById(R.id.dpl_tag);
+
+        itemname.add(tvTag.getText().toString());
+        itemDescr.add(tv.getText().toString());
+
+        /// Hacky?
+        CustomListAdapter adapter=new CustomListAdapter(this, itemname, imgid, itemDescr);
+        proclamantionList.setAdapter(adapter);
+
+        imageDialog.cancel();
+        if (imageDialog != null)
+            imageDialog = null;
     }
 
     public void updatePictureClick(View view){
@@ -511,10 +552,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    private void setPic(ImageView mImageView) {
-        // Get the dimensions of the View
-        int targetW = mImageView.getWidth();
-        int targetH = mImageView.getHeight();
+    private Bitmap setPic(int targetW, int targetH) {
 
         if (targetW ==0 || targetH == 0){
             targetH = this.getWindow().getDecorView().getHeight() / 2;
@@ -559,8 +597,7 @@ public class MainActivity extends AppCompatActivity
             System.err.println(e.toString());
         }
 
-        // Set the bitmap to the imageview
-        mImageView.setImageBitmap(bitmap);
+        return bitmap;
     }
 
     public static Bitmap RotateBitmap(Bitmap source, float angle)
@@ -577,7 +614,9 @@ public class MainActivity extends AppCompatActivity
         imageDialog.setContentView(getLayoutInflater().inflate(R.layout.dialog_post_layout, null));
 
         // Update all the items on the dialog
-        updateDialog();
+        if (!mCurrentPhotoPath.isEmpty()) {
+            updateDialog();
+        }
 
         // Show the dialog
         imageDialog.show();
@@ -586,7 +625,9 @@ public class MainActivity extends AppCompatActivity
     private void updateDialog(){
         // Change the image
         ImageView iv = (ImageView)imageDialog.findViewById(R.id.dpl_iv_post_image);
-        setPic(iv);
+
+        Bitmap bm = setPic(iv.getWidth(), iv.getHeight());
+        iv.setImageBitmap(bm);
 
         // Update the geo coordinates
         TextView tv = (TextView)imageDialog.findViewById(R.id.dpl_tx_geo);
