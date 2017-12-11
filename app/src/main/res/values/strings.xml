@@ -1,5 +1,30 @@
 <resources>
     <string name="app_name">Samaritan</string>
+    <string name="createProfileTitle">Profile settings</string>
+    <string name="helpTitle">Help and About</string>
+
+    <string name="helpWhatIsSamaritan">\t This is an app that allows people to join and share information that they feel others may want to be aware of.
+        For instance when driving you might find that a person has a blinker out, maybe their car’s tags are expired, perhaps their gas cap is open?
+        Other situations are perhaps a pot hole that needs to be fixed.  </string>
+
+    <string name="whatIsAGoodSamaritan">\t As you post things you start off essentially a “Good” Samaritan.
+        That is, you have a positive score.  As you post things others can rank your post as good, neutral, or bad.
+        Neutral posts will give you no points, a good score will give you +1, and bad -1.
+        \n\n\t
+        The point of the app is rather similar to the Greek idea of being “good” or having Virtue.
+        The idea being that to be the best that yourself can be is what is considered good.
+        Through this idea users can use the app to help others through providing information that may be unknown to those individuals.
+    </string>
+
+    <string name="whatAboutBadSamaritan">
+        \t [1.]	If someone is found to be “stalking” another they’re account will be banned and the individual who is being stocked will be notified.
+        \n\t \t [a.]	They will have to submit information explaining and proving why they were posting or subscribing to the items they were.
+        \n\t \t [b.]	Or, the stalked person will have to allow them (Maybe it’s not stalking but a spouse who also wants to be alerted to the same items)
+        \n\t [2.]	If pictures of nude, illicit, or degrading material are posted, they will be removed and the user will have a Samaritan score reduction of 1/5 of their total points (or 25 points) whichever is greater.  Account will be on warning for 3 months.
+        \n\t [3.]	Bullying: Same as above, 1/5 or 25 points, account warning for 3 months.
+        \n\t [4.]	Repetitive issues
+    </string>
+
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

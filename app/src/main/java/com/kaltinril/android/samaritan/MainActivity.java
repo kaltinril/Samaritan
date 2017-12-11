@@ -192,13 +192,14 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_camera) {
             // Handle the camera action
         } else if (id == R.id.nav_camera) {
-
+            requestWritePermissions();
         } else if (id == R.id.nav_add_friend) {
 
         } else if (id == R.id.nav_search) {
 
         } else if (id == R.id.nav_help) {
-
+            Intent intent = new Intent(this, Help.class);
+            startActivity(intent);
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_profile) {
