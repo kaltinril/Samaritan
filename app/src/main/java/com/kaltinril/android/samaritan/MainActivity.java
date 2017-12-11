@@ -191,16 +191,19 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_camera) {
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_add_friend) {
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_search) {
+
+        } else if (id == R.id.nav_help) {
 
         } else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_send) {
-
+        } else if (id == R.id.nav_profile) {
+            Intent intent = new Intent(this, CreateProfile.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
